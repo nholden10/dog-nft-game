@@ -1,3 +1,9 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .connect-wallet-button {
   background-color: red;
   width: 500px;
@@ -8,8 +14,32 @@
 }
 
 .selectCharacter-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.selectCharacter-tile-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  text-align: center;
+}
+
+.selectCharacter-tile {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin: 0;
 }
 
 .selectCharacter-title {
   font-size: 2.5rem;
+}
+
+.mint-button {
+  height: 20px;
+  width: 100%;
+  background-color: blue;
+  color: white;
+  border-radius: 10px;
 }

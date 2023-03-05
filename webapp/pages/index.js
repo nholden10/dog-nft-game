@@ -1,11 +1,11 @@
 import Head from "next/head";
 import Image from "next/image";
 import SelectCharacter from "../components/SelectCharacter";
+import Arena from "../components/Arena";
 import ABI from "../utils/ABI.json";
 
 import { useEffect, useState } from "react";
-import ethers from "ethers";
-import detectEthereumProvider from "@metamask/detect-provider";
+import { ethers } from "ethers";
 
 import { CONTRACT_ADDRESS, transformCharacterData } from "../constants.js";
 
@@ -56,28 +56,31 @@ export default function Home() {
     }
   };
 
+  const checkNetwork = async () => {
+    const currentChainId = await window.ethereum.request({
+      method: "eth_chainId",
+    });
+
+    try {
+      if (parseInt(currentChainId) !== 11155111) {
+        alert("Connect to Sepolia!");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     checkIfWalletIsConnected();
-    const { ethereum } = window;
-    const checkNetwork = async () => {
-      const currentChainId = await ethereum.request({
-        method: "eth_chainId",
-      });
-      try {
-        if (currentChainId !== 11155111) {
-          alert("Connect to Sepolia!");
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+    checkNetwork();
   }, []);
 
   useEffect(() => {
     const getNFTData = async () => {
       console.log("Chacking for characters NFT on address:", currentAccount);
 
-      const provider = new ethers.providers.Web3Provider(ethereum);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
       const signer = provider.getSigner();
       const gameContract = new ethers.Contract(
         CONTRACT_ADDRESS,
@@ -107,12 +110,16 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <button className="connect-wallet-button" onClick={connectWallet}>
-        Connect Wallet
-      </button>
-      {currentAccount && !characterNFT && (
-        <SelectCharacter setCharacterNFT={setCharacterNFT} />
-      )}
+      <main className="main-container">
+        <button className="connect-wallet-button" onClick={connectWallet}>
+          Connect Wallet
+        </button>
+        {currentAccount && !characterNFT ? (
+          <SelectCharacter setCharacterNFT={setCharacterNFT} />
+        ) : (
+          <Arena characterNFT={characterNFT} />
+        )}
+      </main>
     </>
   );
 }
