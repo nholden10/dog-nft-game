@@ -43,3 +43,25 @@
   color: white;
   border-radius: 10px;
 }
+
+.arena-container {
+  display: flex;
+  gap: 20vw;
+}
+
+.CharacterTile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hp-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-container {
+  display: flex;
+  flex-direction: column;
+}

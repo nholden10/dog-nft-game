@@ -117,7 +117,7 @@ export default function Home() {
         {currentAccount && !characterNFT ? (
           <SelectCharacter setCharacterNFT={setCharacterNFT} />
         ) : (
-          <Arena characterNFT={characterNFT} />
+          <Arena characterNFT={characterNFT} currentAccount={currentAccount} />
         )}
       </main>
     </>

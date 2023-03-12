@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import CharacterTile from "./CharacterTile.js";
 
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
@@ -74,10 +75,7 @@ export default function SelectCharacter({ setCharacterNFT }) {
   const characterBoxes = characters.map((character, index) => {
     return (
       <div key={character.name} className="selectCharacter-tile">
-        <h1>{character.name}</h1>
-        <Image src={character.imageURI} width={200} height={200} alt="Error" />
-        <p>Max HP: {parseInt(character.hp)}</p>
-        <p>Attack Damage: {parseInt(character.attackDamage)}</p>
+        <CharacterTile character={character} />
         <button className="mint-button" onClick={() => mintCharacterNFT(index)}>
           Mint {character.name}
         </button>

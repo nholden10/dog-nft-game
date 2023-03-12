@@ -18,6 +18,11 @@ const nextConfig = {
         hostname: "www.akc.org",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+        port: "",
+      },
     ],
   },
 };
