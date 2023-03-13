@@ -6,9 +6,15 @@ import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, transformCharacterData } from "../constants.js";
 import ABI from "../utils/ABI.json";
 
-export default function Arena({ characterNFT, currentAccount }) {
+export default function Arena({
+  characterNFT,
+  setCharacterNFT,
+  currentAccount,
+}) {
   const [gameContract, setGameContract] = useState(null);
   const [bossNFT, setBossNFT] = useState(null);
+
+  const [attackState, setAttackState] = useState(null);
 
   useEffect(() => {
     const { ethereum } = window;
@@ -35,24 +41,68 @@ export default function Arena({ characterNFT, currentAccount }) {
       setBossNFT(transformCharacterData(bossTxn));
     };
 
+    const onAttackComplete = (sender, newBossHp, newPlayerHp) => {
+      console.log(
+        `sender ${sender}, newBossHp: ${newBossHp}, newPlayerHp: ${newPlayerHp}`
+      );
+      const bossHp = newBossHp.toNumber();
+      const playerHp = newPlayerHp.toNumber();
+
+      console.log(
+        `Attack Complete: Boss Hp: ${bossHp}, Player Hp: ${playerHp}`
+      );
+
+      if (currentAccount === sender.toLowerCase()) {
+        setBossNFT((prevState) => {
+          return { ...prevState, hp: bossHp };
+        });
+        setCharacterNFT((prevState) => {
+          return { ...prevState, hp: playerHp };
+        });
+      }
+    };
+
     if (gameContract) {
       fetchBoss();
+      gameContract.on("AttackCompleted", onAttackComplete);
     }
+
+    return () => {
+      if (gameContract) {
+        gameContract.off("AttackCompleted", onAttackComplete);
+      }
+    };
   }, [gameContract]);
 
   const attack = async () => {
-    const attackTxn = await gameContract.attackBoss();
-    console.log("Boss was attacked!");
+    try {
+      if (gameContract) {
+        setAttackState("attacking");
+        console.log("Attacking boss...");
+        const attackTxn = await gameContract.attackBoss();
+        await attackTxn.wait();
+        console.log("attackTxn:", attackTxn);
+        setAttackState("hit");
+      }
+    } catch (error) {
+      console.log("Error attacking boss: ", error);
+      setAttackState("");
+    }
   };
 
   return (
     <div className="arena-container">
       <div className="hero-container">
-        <CharacterTile character={characterNFT} />
-        <button onClick={attack}>Attack {bossNFT.name}!</button>
+        {characterNFT ? (
+          <CharacterTile character={characterNFT} />
+        ) : (
+          <p>Character not loaded</p>
+        )}
+        <button onClick={attack}>
+          Attack {bossNFT ? bossNFT.name : "hello"}!
+        </button>
       </div>
-
-      <CharacterTile character={bossNFT} />
+      {bossNFT ? <CharacterTile character={bossNFT} /> : "Boss not loaded"}
     </div>
   );
 }

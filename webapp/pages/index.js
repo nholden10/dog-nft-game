@@ -112,12 +112,16 @@ export default function Home() {
       </Head>
       <main className="main-container">
         <button className="connect-wallet-button" onClick={connectWallet}>
-          Connect Wallet
+          {currentAccount ? "Connected" : "Connect Wallet"}
         </button>
         {currentAccount && !characterNFT ? (
           <SelectCharacter setCharacterNFT={setCharacterNFT} />
         ) : (
-          <Arena characterNFT={characterNFT} currentAccount={currentAccount} />
+          <Arena
+            characterNFT={characterNFT}
+            setCharacterNFT={setCharacterNFT}
+            currentAccount={currentAccount}
+          />
         )}
       </main>
     </>
